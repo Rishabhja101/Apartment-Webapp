@@ -6,11 +6,14 @@ export default class CreateDevice extends Component {
     super(props);
 
     this.state = {
-      name: ''
+      name: '',
+      state: '',
+      states: []
     }
 
     this.onChangeName = this.onChangeName.bind(this);
     this.onChangeState = this.onChangeState.bind(this);
+    this.onChangeStates = this.onChangeStates.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
 
@@ -26,10 +29,19 @@ export default class CreateDevice extends Component {
     });
   }
 
+  onChangeStates(e) {
+    this.setState({
+      states: e.target.value.split(','),
+      state: e.target.value.split(',')[0]
+    });
+  }
+
   onSubmit(e) {
     e.preventDefault();
     const device = {
-      name: this.state.name
+      name: this.state.name,
+      state: this.state.state,
+      states: this.state.states
     };
     console.log(device);
     axios.post('http://localhost:5000/devices/add', device)
@@ -49,6 +61,15 @@ export default class CreateDevice extends Component {
               className="form-control"
               value={this.state.name}
               onChange={this.onChangeName}
+              />
+        </div>
+        <div className="form-group"> 
+          <label>States: </label>
+          <input  type="text"
+              required
+              className="form-control"
+              value={this.state.states}
+              onChange={this.onChangeStates}
               />
         </div>
         <div className="form-group">

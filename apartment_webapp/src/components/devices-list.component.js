@@ -8,7 +8,7 @@ const Device = props => (
       <td>{props.device.state}</td>
       <td>
         <Link to={"/edit/"+props.device._id}>edit</Link> | <a href="#" onClick={() => { props.deleteDevice(props.device._id) }}>delete</a> 
-            | <a href="#" onClick={() => { props.flipDeviceState(props.device._id) }}>flip</a>
+            | <a href="#" onClick={() => { props.toggleDeviceState(props.device._id) }}>toggle</a>
       </td>
     </tr>
   )
@@ -17,7 +17,7 @@ export default class DevicesList extends Component {
     constructor(props) {
         super(props);
         this.deleteDevice = this.deleteDevice.bind(this);
-        this.flipDeviceState = this.flipDeviceState.bind(this);
+        this.toggleDeviceState = this.toggleDeviceState.bind(this);
         this.state = {devices: []};
     }
 
@@ -31,29 +31,31 @@ export default class DevicesList extends Component {
          })
     }
 
-    flipDeviceState(id){
+    toggleDeviceState(id){
         let device = {
             name: '',
-            state: ''
+            state: '',
+            states: []
         };
         
-        const myArray = this.state.devices;
-
-        myArray.forEach((element, index, array) => {
+        const devices = this.state.devices;
+        devices.forEach((element) => {
             if (element._id == id){
                 device.name = element.name;
                 device.state = element.state;
+                device.states = element.states;
             }
         });
         
+        var i;
+        for (i = 0; i < device.states.length; i++){
+            if (device.state == device.states[i]){
+                device.state = device.states[(i + 1) % device.states.length];
+                i = device.states.length;
+            }
+        }
+
         console.log(device);
-        
-        if (device.state == 'inactive'){
-            device.state = 'active';
-        }
-        else{
-            device.state = 'inactive';
-        }
 
         axios.post('http://localhost:5000/devices/update/'+ id, device)  
             .then(res => console.log(res.data));
@@ -71,7 +73,7 @@ export default class DevicesList extends Component {
 
     deviceList() {
         return this.state.devices.map(currentdevice => {
-          return <Device device={currentdevice} deleteDevice={this.deleteDevice} flipDeviceState={this.flipDeviceState} key={currentdevice._id}/>;
+          return <Device device={currentdevice} deleteDevice={this.deleteDevice} toggleDeviceState={this.toggleDeviceState} key={currentdevice._id}/>;
         })
     }
 

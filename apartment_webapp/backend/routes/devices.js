@@ -9,9 +9,10 @@ router.route('/').get((req, res) => {
 
 router.route('/add').post((req, res) => {
   const name = req.body.name;
-  const state = "inactive";
+  const state = req.body.state;
+  const states = req.body.states;
 
-  const newDevice = new Device({name, state});
+  const newDevice = new Device({name, state, states});
 
   newDevice.save()
     .then(() => res.json('Device added!'))
@@ -35,6 +36,7 @@ router.route('/update/:id').post((req, res) => {
     .then(device => {
       device.name = req.body.name;
       device.state = req.body.state;
+      device.states = req.body.states;
 
       device.save()
         .then(() => res.json('Device updated!'))

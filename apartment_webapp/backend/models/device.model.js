@@ -14,6 +14,11 @@ const deviceSchema = new Schema({
     type: String,
     required: true,
     trim: true
+  },
+  states: {
+    type: [String],
+    required: true,
+    trim: true
   }
 }, {
   timestamps: true,
