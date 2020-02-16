@@ -7,10 +7,12 @@ export default class EditDevice extends Component {
             
         this.state = {
             name: '',
-            state: ''
+            state: '',
+            states: []
         }
 
         this.onChangeName = this.onChangeName.bind(this);
+        this.onChangeStates = this.onChangeStates.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
   
@@ -19,7 +21,8 @@ export default class EditDevice extends Component {
           .then(response => {
             this.setState({
               name: response.data.name,
-              state: response.data.state
+              state: response.data.state,
+              states: response.data.states
             })   
         })
           .catch(function (error) {
@@ -33,12 +36,24 @@ export default class EditDevice extends Component {
         });
     }
 
+    onChangeStates(e) {
+        this.setState({
+          states: e.target.value.split(','),
+          state: e.target.value.split(',')[0]
+        });
+      }
+
     onSubmit(e) {
+        var i = 0;
+        for (i = 0; i < this.state.states.length; i++){
+          this.state.states[i] = this.state.states[i].trim();
+        }
+
         e.preventDefault();
-    
         const device = {
           name: this.state.name,
-          state: this.state.state
+          state: this.state.state,
+          states: this.state.states
         };
     
         console.log(device);
@@ -62,7 +77,16 @@ export default class EditDevice extends Component {
                     value={this.state.name}
                     onChange={this.onChangeName}
                     />
-              </div>    
+              </div> 
+              <div className="form-group"> 
+                <label>States: </label>
+                <input  type="text"
+                    required
+                    className="form-control"
+                    value={this.state.states}
+                    onChange={this.onChangeStates}
+                    />
+              </div>   
               <div className="form-group">
                 <input type="submit" value="Edit Device" className="btn btn-primary" />
               </div>

@@ -37,6 +37,11 @@ export default class CreateDevice extends Component {
   }
 
   onSubmit(e) {
+    var i = 0;
+    for (i = 0; i < this.state.states.length; i++){
+      this.state.states[i] = this.state.states[i].trim();
+    }
+    
     e.preventDefault();
     const device = {
       name: this.state.name,
