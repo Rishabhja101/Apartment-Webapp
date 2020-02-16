@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import '../style/create-device.css';
 
 export default class CreateDevice extends Component {
   constructor(props) {
@@ -41,7 +42,7 @@ export default class CreateDevice extends Component {
     for (i = 0; i < this.state.states.length; i++){
       this.state.states[i] = this.state.states[i].trim();
     }
-    
+
     e.preventDefault();
     const device = {
       name: this.state.name,
@@ -49,7 +50,7 @@ export default class CreateDevice extends Component {
       states: this.state.states
     };
     console.log(device);
-    axios.post('http://localhost:5000/devices/add', device)
+    axios.post('http://10.194.222.20:5000/devices/add', device)
       .then(res => console.log(res.data));
     window.location = '/';
   }
@@ -59,7 +60,7 @@ export default class CreateDevice extends Component {
       <div>
       <h3>Create New Device</h3>
       <form onSubmit={this.onSubmit}>
-        <div className="form-group"> 
+        <div className="textbox"> 
           <label>Name: </label>
           <input  type="text"
               required
@@ -68,7 +69,7 @@ export default class CreateDevice extends Component {
               onChange={this.onChangeName}
               />
         </div>
-        <div className="form-group"> 
+        <div className="textbox"> 
           <label>States: </label>
           <input  type="text"
               required

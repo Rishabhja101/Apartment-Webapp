@@ -11,13 +11,15 @@ import CreateDevice from "./components/create-device.component";
 
 function App() {
   return (
-    <Router>
-      <div className="container">
-        <Navbar />
-        <br/>
-        <Route path="/" exact component={DevicesList} />
-        <Route path="/edit/:id" component={EditDevice} />
-        <Route path="/create" component={CreateDevice} />
+    <Router >
+      <div className="App">
+        <div className="container">
+          <Navbar />
+          <br/>
+          <Route path="/" exact component={DevicesList} />
+          <Route path="/edit/:id" component={EditDevice} />
+          <Route path="/create" component={CreateDevice} />
+        </div>
       </div>
     </Router>
   );

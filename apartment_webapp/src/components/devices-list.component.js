@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import '../style/device-list.css';
 
 const Device = props => (
     <tr>
@@ -22,7 +23,7 @@ export default class DevicesList extends Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:5000/devices/')
+        axios.get('http://10.194.222.20:5000/devices/')
          .then(response => {
            this.setState({ devices: response.data });
          })
@@ -57,14 +58,26 @@ export default class DevicesList extends Component {
 
         console.log(device);
 
-        axios.post('http://localhost:5000/devices/update/'+ id, device)  
+        if (device.name == "lamp"){
+            if (device.state === "on"){
+                axios.post('https://maker.ifttt.com/trigger/light_on/with/key/pwjn1fdt76tlo9SfKyxaP0UXVIFSRTBYvN4ydA5MGhL')  
+            .then(res => console.log(res.data));
+            }
+            else {
+                axios.post('https://maker.ifttt.com/trigger/light_off/with/key/pwjn1fdt76tlo9SfKyxaP0UXVIFSRTBYvN4ydA5MGhL')  
+                .then(res => console.log(res.data));
+            }
+            //https://maker.ifttt.com/trigger/light_on/with/key/pwjn1fdt76tlo9SfKyxaP0UXVIFSRTBYvN4ydA5MGhL
+        }
+
+        axios.post('http://10.194.222.20:5000/devices/update/'+ id, device)  
             .then(res => console.log(res.data));
 
         window.location = '/';
     }
 
     deleteDevice(id) {
-        axios.delete('http://localhost:5000/devices/'+id)
+        axios.delete('http://10.194.222.20:5000/devices/'+id)
           .then(res => console.log(res.data));
         this.setState({
           devices: this.state.devices.filter(el => el._id !== id)
@@ -80,7 +93,7 @@ export default class DevicesList extends Component {
     render() {
         return (
             <div>
-            <h3>Logged Exercises</h3>
+            <h3>Devices</h3>
             <table className="table">
               <thead className="thead-light">
                 <tr>

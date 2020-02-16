@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import '../style/edit-device.css';
 
 export default class EditDevice extends Component {
     constructor(props) {
@@ -17,7 +18,7 @@ export default class EditDevice extends Component {
     }
   
     componentDidMount() {
-        axios.get('http://localhost:5000/devices/'+this.props.match.params.id)
+        axios.get('http://10.194.222.20:5000/devices/'+this.props.match.params.id)
           .then(response => {
             this.setState({
               name: response.data.name,
@@ -58,7 +59,7 @@ export default class EditDevice extends Component {
     
         console.log(device);
     
-        axios.post('http://localhost:5000/devices/update/'+this.props.match.params.id, device)  
+        axios.post('http://10.194.222.20:5000/devices/update/'+this.props.match.params.id, device)  
           .then(res => console.log(res.data));
         
         window.location = '/';
@@ -68,8 +69,8 @@ export default class EditDevice extends Component {
         return (
             <div>
             <h3>Edit Device</h3>
-            <form onSubmit={this.onSubmit}>
-              <div className="form-group"> 
+            <form className="center" onSubmit={this.onSubmit}>
+              <div className="textbox"> 
                 <label>Name: </label>
                 <input  type="text"
                     required
@@ -78,7 +79,7 @@ export default class EditDevice extends Component {
                     onChange={this.onChangeName}
                     />
               </div> 
-              <div className="form-group"> 
+              <div className="textbox"> 
                 <label>States: </label>
                 <input  type="text"
                     required
