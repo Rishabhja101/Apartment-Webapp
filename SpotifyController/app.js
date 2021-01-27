@@ -1,6 +1,7 @@
 const APIController = (function() {
     
-
+    const clientId = '';
+    const clientSecret = '';
 
     // private methods
     const _getToken = async () => {
@@ -16,6 +17,7 @@ const APIController = (function() {
 
         const data = await result.json();
         console.log(data);
+        console.log('hi there');
         return data.access_token;
     }
     
@@ -73,7 +75,8 @@ const APIController = (function() {
     // add song to the end of the queue
     const _addToQueue = async (token, uri) => {
         console.log(uri);
-        token = 'BQCRSbXPODWeiRYGaP5IT4vaE2XfKAd4ZWdTMnI6u7BHHDdqGe0Q8UvfqX3qab5Der2BT7p1zwJ_W46fgi_CXmfGOuGR_zqIdV75jd934fWMjJhgMFtGw0XOtIjbrHUm1ZlbvTmNiloGIPdyX2jUHdlfYVCYJL3UY8FeSA_B4JFJ_uf9R32QKLmMnnefgpuKdNnxVW32LMCpvZafzBs6fSfx4Twsluimz0RpgTn9NUaW4SiQ3U-KD80irO7ts6nz5dGVtXxrcAP4fuoA6WfHy1Y';
+        // token = 'BQBpnhPv-EtH738Q-ePQyVJOUpVSFXO7c5w4tF_yA91M_0o9whomv2nogj9SFMPVZ85ednjs3mNidf9EpRN6a5r-3xljhWiVlngWE2Dl69DED30pPpV41sdVyQd3FSb6T-j36BvhyresWxVWvUnpe6ntK1q-enQd6kYRXLZFb45Kr76JGTwPoL__jZoB-hxMFIU_wvZ4P-YidYtAKFnpU5UQa0FBSkoxw_cP9mPRnKVRAYvxv1upWyjZ6O57O_cs4iVCBI_jLUJt8U2RXEU0wXI';
+        token = 'BQCJDbvxuz1Hwtpf_0wwNprv1naxw-LeX85wbgSYlAHSx5GG3qxD8zi_cszuzys88U8n9eYzj_b_9J3C6nlHPYXxODNTNGJ91dvzta9Hd0paCvbX3ndMvhs-D-1_W6mYePBSkgHgTvbvnLXHcLZ5Fw0baA';
         // const result = await fetch(`https://api.spotify.com/v1/me/player/queue?uri=spotify%3Atrack%3A6eTCWWKBtnJI9Ui9OlLEyO`, {
      const result = await fetch(`https://api.spotify.com/v1/me/player/queue?uri=${uri}`, {
             method: 'POST',
