@@ -10,12 +10,6 @@ export default class Navbar extends Component {
         <Link to="/" className="title" >Apartment Smart Interface</Link>
         <div className="collpase navbar-collapse">
         <ul className="navbar-nav mr-auto">
-          <li className="navbar-item">
-          <Link to="/" className="nav-link">Devices</Link>
-          </li>
-          <li className="navbar-item">
-          <Link to="/create" className="nav-link">Add Device</Link>
-          </li>
         </ul>
         </div>
       </nav>

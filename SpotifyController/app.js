@@ -20,7 +20,7 @@ const APIController = (function() {
         console.log('hi there');
         return data.access_token;
     }
-    
+
     const _getGenres = async (token) => {
 
         const result = await fetch(`https://api.spotify.com/v1/browse/categories?locale=sv_US`, {
