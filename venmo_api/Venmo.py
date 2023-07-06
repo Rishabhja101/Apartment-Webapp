@@ -5,7 +5,11 @@ class Venmo:
         return Client.get_access_token(username=username, password=password)
 
     def __init__(self, access_token):
+        self.access_token = access_token
         self.client = Client(access_token=access_token)
+
+    def revoke_access_token(self):
+        self.client.log_out("Bearer " + self.access_token)
 
     def get_user(self, search_term):
         users_raw = self.client.user.search_for_users(query="Raj Pulu")
