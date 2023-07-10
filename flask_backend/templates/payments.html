@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Payments</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #e0e0e0;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .friend-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .friend-image {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+        
+        .friend-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .friend-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .friend-username {
+            color: #888;
+        }
+        
+        .link-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .link-container a {
+            text-decoration: none;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .link-container a:not(:last-child) {
+            margin-right: 8px;
+        }
+        
+        .link-container a:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>View Payments</h1>
+    <table>
+        <tr>
+            <th>Friend</th>
+            <th>Amount</th>
+            <th>Type</th>
+            <th>Frequency</th>
+        </tr>
+        {% for payment in payments %}
+        <tr>
+            <td>
+                <div class="friend-info">
+                    <img src="{{ payment.friend.image_url }}" alt="Friend Image" class="friend-image">
+                    <div class="friend-details">
+                        <span class="friend-name">{{ payment.friend.first_name }} {{ payment.friend.last_name }}</span>
+                        <span class="friend-username">@{{ payment.friend.username }}</span>
+                    </div>
+                </div>
+            </td>
+            <td>{{ payment.amount }}</td>
+            <td>{{ payment.direction }}</td>
+            <td>{{ payment.frequency }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div class="link-container">
+        <a href="{{ url_for('add_payment') }}">Add Payment</a>
+        <a href="{{ url_for('view_friends') }}">View Friends</a>
+    </div>
+</body>
+</html>

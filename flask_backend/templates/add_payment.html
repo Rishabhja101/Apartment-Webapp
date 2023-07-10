@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Payment</title>
+    <script src="https://unpkg.com/accounting.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .currency-input,
+        select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .link-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .link-container a {
+            text-decoration: none;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .link-container a:not(:last-child) {
+            margin-right: 8px;
+        }
+        
+        .link-container a:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script>
+        window.addEventListener("DOMContentLoaded", function() {
+            // Format the amount input as currency
+            var amountInput = document.getElementById("amount");
+            amountInput.placeholder = "$0.00";
+
+            amountInput.addEventListener("input", function(event) {
+                // Remove non-digit characters from the input value
+                var cleanedValue = event.target.value.replace(/[^0-9.]/g, '');
+
+                // Update the input value with the cleaned value
+                event.target.value = cleanedValue;
+
+                // Format the cleaned value as currency
+                var formattedAmount = accounting.formatMoney(cleanedValue, { symbol: "$", precision: 2 });
+                event.target.value = formattedAmount;
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Add Payment</h1>
+    <form action="{{ url_for('add_payment') }}" method="POST">
+        <label for="friend">Friend:</label>
+        <select name="friend" id="friend" required>
+            {% for friend in friends %}
+                <option value="{{ friend }}">{{ friend.first_name }} {{ friend.last_name }} (@{{ friend.username }})</option>
+            {% endfor %}
+        </select>
+
+        <label for="amount">Amount:</label>
+        <input type="text" name="amount" id="amount" class="currency-input" required>
+
+        <label for="direction">Type:</label>
+        <select name="direction" id="direction" required>
+            <option value="request">Request</option>
+            <option value="pay">Pay</option>
+        </select>
+
+        <label for="frequency">Frequency:</label>
+        <select name="frequency" id="frequency" required>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="annually">Annually</option>
+        </select>
+
+        <button type="submit">Add Payment</button>
+    </form>
+    <div class="link-container">
+        <a href="{{ url_for('payments') }}">Back to Payments</a>
+    </div>
+</body>
+</html>

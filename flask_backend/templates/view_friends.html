@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Friends</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        ul#friends {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        
+        li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .friend-image {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        .friend-info {
+            margin-left: 10px;
+        }
+        
+        .friend-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .username {
+            color: #888;
+        }
+        
+        .link-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .link-container a {
+            text-decoration: none;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .link-container a:not(:last-child) {
+            margin-right: 8px;
+        }
+        
+        .link-container a:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>View Friends</h1>
+    <ul id="friends">
+        {% for friend in friends %}
+        <li>
+            <img src="{{ friend.image_url }}" alt="Friend Image" class="friend-image">
+            <div class="friend-info">
+                <span class="friend-name">{{ friend.first_name }} {{ friend.last_name }}</span>
+                <span class="username">@{{ friend.username }}</span>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    <div class="link-container">
+        <a href="{{ url_for('add_friend') }}">Add Friend</a>
+        <a href="{{ url_for('payments') }}">Back to Payments</a>
+    </div>
+</body>
+</html>

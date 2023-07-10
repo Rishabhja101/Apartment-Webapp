@@ -12,7 +12,7 @@ class Venmo:
         self.client.log_out("Bearer " + self.access_token)
 
     def get_user(self, search_term):
-        users_raw = self.client.user.search_for_users(query="Raj Pulu")
+        users_raw = self.client.user.search_for_users(query=search_term)
         users = []
         for user_raw in users_raw:
             user = {'first_name': user_raw.first_name,

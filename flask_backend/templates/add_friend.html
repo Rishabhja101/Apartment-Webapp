@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Friend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .form-row label {
+            margin-right: 10px;
+        }
+
+        .form-row input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-row button {
+            margin-left: 10px; /* Add left margin for spacing */
+        }
+        
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        li {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+        
+        img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+        
+        .friend-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .friend-name {
+            font-weight: bold;
+        }
+        
+        .username {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: center; /* Center the buttons horizontally */
+            margin-top: 20px;
+        }
+        
+        .button-container a {
+            text-decoration: none;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .button-container a:not(:last-child) {
+            margin-right: 8px;
+        }
+        
+        .button-container a:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Get the input field, results list, and search button
+            var input = $("#friend_name");
+            var results = $("#results");
+            var searchBtn = $("#search_btn");
+            var backBtn = $("#back_btn");
+
+            // Handle search button click event
+            searchBtn.click(function(e) {
+                e.preventDefault();
+                searchFriends();
+            });
+
+            // Handle option selection event
+            results.on("click", "li", function() {
+                var selectedOption = $(this).data("friend-data");
+                console.log(selectedOption)
+                input.val(selectedOption);
+                results.empty();
+                addFriend(selectedOption);
+            });
+
+            // Function to search friends
+            function searchFriends() {
+                var searchValue = input.val();
+
+                // Send a fetch POST request to search for friends
+                fetch('/friends/search', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ search: searchValue })
+                })
+                .then(response => response.json())
+                .then(response => {
+                    // Clear the previous results
+                    results.empty();
+
+                    // Add the new results to the list
+                    response.forEach(function(friend) {
+                        var friendElement = $("<li>").data("friend-data", friend);
+                        friendElement.append($("<img>", { src: friend.image_url, alt: "Friend Image" }));
+                        var friendInfo = $("<div>", { class: "friend-info" });
+                        friendInfo.append($("<span>", { text: friend.first_name + " " + friend.last_name, class: "friend-name" }));
+                        friendInfo.append($("<span>", { text: "@" + friend.username, class: "username" }));
+                        friendElement.append(friendInfo);
+                        results.append(friendElement);
+                    });
+                });
+            }
+
+            // Function to add a friend
+            function addFriend(friendName) {
+                // Send a fetch POST request to add the friend
+                fetch('/friends/add', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ new_friend: friendName })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Redirect to the view friends page
+                        window.location.href = "/friends";
+                    }
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>Add Friend</h1>
+
+    <div class="form-row">
+        <label for="friend_name">Friend Name:</label>
+        <input type="text" name="friend_name" id="friend_name" required>
+        <button type="button" id="search_btn">Search</button>
+    </div>
+
+    <ul id="results"></ul>
+
+    <div class="button-container">
+        <a href="{{ url_for('payments') }}">Back to Payments</a>
+        <a href="{{ url_for('view_friends') }}">Back to View Friends</a>
+    </div>
+
+    <script>
+        function goToViewFriends() {
+            window.location.href = "/friends";
+        }
+    </script>
+</body>
+</html>
