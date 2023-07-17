@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Mirror</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-direction: column;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .train-info {
+            text-align: left;
+            margin-bottom: 50px;
+            margin-top: 150px;
+            padding-left: 50px;
+        }
+
+        .train-info h2 {
+            margin-top: 0;
+        }
+
+        .train-info ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .train-info li {
+            margin-bottom: 10px;
+            border: 1px solid white;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: black;
+            width: 100px; /* Adjust the width as needed */
+            text-align: center;
+        }
+
+        .train-info li.less-than-7-min {
+            background-color: red;
+        }
+
+        .weather-container {
+            display: flex;
+            /* justify-content: space-between; */
+            align-items: flex-start;
+            width: 100%;
+            max-width: 100%;
+            margin-top: 50px;
+            bottom: 0;
+            align-items: center;
+        }
+
+        .weather-info {
+            background-color: black;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding-left: 50px;
+        }
+
+        .weather-info p {
+            margin: 0;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .weather-icon {
+            width: 50px;
+            height: 50px;
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 10px;
+        }
+
+        .hourly-forecast {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            margin-left: 20px;
+        }
+
+        .hourly-card {
+            background-color: black;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            text-align: center;
+            width: 50px;
+        }
+
+        .hourly-card p {
+            margin: 0;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .hourly-card .temperature {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-family: "Arial Rounded MT Bold", sans-serif;
+        }
+
+        .hourly-card .weather-icon {
+            width: 50px;
+            height: 50px;
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script>
+        // Function to update the wait times and weather data
+        function updateWeather() {
+            fetch('/weather')
+                .then(response => response.json())
+                .then(data => {
+                    const temperatureElement = document.getElementById('temperature');
+                    const feelsLikeElement = document.getElementById('feels-like');
+                    const humidityElement = document.getElementById('humidity');
+                    const weatherDescElement = document.getElementById('weather-desc');
+                    const weatherIconElement = document.getElementById('weather-icon');
+                    const hourlyForecastElement = document.getElementById('hourly-forecast');
+
+                    temperatureElement.innerText = Math.round(data.temperature) + '°F';
+                    feelsLikeElement.innerText = 'Feels Like: ' + Math.round(data.feels_like) + '°F';
+                    humidityElement.innerText = 'Humidity: ' + data.humidity + '%';
+                    weatherDescElement.innerText = 'Weather: ' + data.weather_desc;
+                    weatherIconElement.src = 'http://openweathermap.org/img/wn/' + data.icon + '.png';
+
+                    hourlyForecastElement.innerHTML = ''; // Clear the existing forecast
+
+
+                    data.hourly_data.slice(0, 9).forEach(hour => {
+                        const hourElement = document.createElement('div');
+                        hourElement.className = 'hourly-card';
+
+                        const hourTimeElement = document.createElement('p');
+                        hourTimeElement.innerText = hour.dt;
+
+                        const tempElement = document.createElement('p');
+                        tempElement.className = 'temperature';
+                        tempElement.innerText = Math.round(hour.temp) + '°F';
+
+                        const weatherDescElement = document.createElement('p');
+                        weatherDescElement.innerText = hour.weather_desc;
+
+                        const rainElement = document.createElement('p');
+                        if (hour.precipitation_prob > 0) {
+                            rainElement.innerText = 'Rain: ' + hour.precipitation_prob + '%';
+                        }
+
+                        const weatherIcon = document.createElement('img');
+                        weatherIcon.className = 'weather-icon';
+                        weatherIcon.src = 'http://openweathermap.org/img/wn/' + hour.icon + '.png';
+
+                        hourElement.appendChild(hourTimeElement);
+                        hourElement.appendChild(tempElement);
+                        hourElement.appendChild(weatherDescElement);
+                        if (hour.precipitation_prob > 0) {
+                            hourElement.appendChild(rainElement);
+                        }
+                        hourElement.appendChild(weatherIcon);
+                        hourlyForecastElement.appendChild(hourElement);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function updateTrain() {
+            fetch('/wait_times')
+                .then(response => response.json())
+                .then(data => {
+                    const kimballTimes = data['Service toward Kimball'];
+                    const loopTimes = data['Service toward Loop'];
+
+                    const kimballList = document.getElementById('kimball-times');
+                    kimballList.innerHTML = ''; // Clear the existing list
+
+                    kimballTimes.forEach(time => {
+                        const li = document.createElement('li');
+                        li.innerText = time['minutes'] + ' min ' + time['seconds'] + ' sec';
+                        if (time['minutes'] < 7) {
+                            li.className = 'less-than-7-min';
+                        }
+                        kimballList.appendChild(li);
+                    });
+
+                    const loopList = document.getElementById('loop-times');
+                    loopList.innerHTML = ''; // Clear the existing list
+
+                    loopTimes.forEach(time => {
+                        const li = document.createElement('li');
+                        li.innerText = time['minutes'] + ' min ' + time['seconds'] + ' sec';
+                        if (time['minutes'] < 7) {
+                            li.className = 'less-than-7-min';
+                        }
+                        loopList.appendChild(li);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Update the data initially and every 5 minutes
+        window.addEventListener('DOMContentLoaded', updateTrain);
+        window.addEventListener('DOMContentLoaded', updateWeather);
+        setInterval(updateTrain, 1000);
+        setInterval(updateWeather, 5 * 60 * 1000);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="train-info">
+            <h2>Train Arrivals</h2>
+            <div>
+                <h3>Service toward Loop:</h3>
+                <ul id="loop-times">
+                    {% for time in wait_times['Service toward Loop'] %}
+                        <li>{{ time['minutes'] }} min {{ time['seconds'] }} sec</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div>
+                <h3>Service toward Kimball:</h3>
+                <ul id="kimball-times">
+                    {% for time in wait_times['Service toward Kimball'] %}
+                        <li>{{ time['minutes'] }} min {{ time['seconds'] }} sec</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="weather-container">
+            <div class="weather-info">
+                <p id="temperature"></p>
+                <p id="feels-like"></p>
+                <p id="humidity"></p>
+                <p id="weather-desc"></p>
+                <img id="weather-icon" src="" alt="Weather Icon">
+            </div>
+            <div class="hourly-forecast" id="hourly-forecast">
+                <!-- Hourly forecast data will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+</body>
+</html>

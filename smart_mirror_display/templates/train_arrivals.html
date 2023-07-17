@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Train Arrivals</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+            border: 1px solid white;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: black;
+            width: 100px; /* Adjust the width as needed */
+            text-align: center;
+        }
+    </style>
+    <script>
+        // Function to update the wait times
+        function updateWaitTimes() {
+            fetch('/wait_times')
+                .then(response => response.json())
+                .then(data => {
+                    const kimballTimes = data['Service toward Kimball'];
+                    const loopTimes = data['Service toward Loop'];
+
+                    const kimballList = document.getElementById('kimball-times');
+                    kimballList.innerHTML = ''; // Clear the existing list
+
+                    kimballTimes.forEach(time => {
+                        const li = document.createElement('li');
+                        li.innerText = time['minutes'] + ' min ' + time['seconds'] + ' sec';
+                        kimballList.appendChild(li);
+                    });
+
+                    const loopList = document.getElementById('loop-times');
+                    loopList.innerHTML = ''; // Clear the existing list
+
+                    loopTimes.forEach(time => {
+                        const li = document.createElement('li');
+                        li.innerText = time['minutes'] + ' min ' + time['seconds'] + ' sec';
+                        loopList.appendChild(li);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Update the wait times initially and every second
+        window.addEventListener('DOMContentLoaded', updateWaitTimes);
+        setInterval(updateWaitTimes, 1000);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Train Arrivals</h1>
+        <h2>Service toward Loop:</h2>
+        <ul id="loop-times">
+            {% for time in wait_times["Service toward Loop"] %}
+                <li>{{ time["minutes"] }} min {{ time["seconds"] }} sec</li>
+            {% endfor %}
+        </ul>
+        <h2>Service toward Kimball:</h2>
+        <ul id="kimball-times">
+            {% for time in wait_times["Service toward Kimball"] %}
+                <li>{{ time["minutes"] }} min {{ time["seconds"] }} sec</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

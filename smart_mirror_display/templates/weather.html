@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather Forecast</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+    
+        .container {
+            max-width: 1200px; /* Adjust the maximum width as needed */
+            margin: 0 auto;
+            text-align: center;
+            display: flex; /* Add flex display */
+            flex-wrap: wrap; /* Wrap the items onto the next line */
+            justify-content: center; /* Center the items horizontally */
+        }
+    
+        .header {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            width: 100%; /* Add width to occupy the full width */
+        }
+    
+        .current-weather {
+            background-color: #000;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    
+        .current-weather p {
+            margin: 0;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+    
+        .weather-icon {
+            width: 50px;
+            height: 50px;
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 10px;
+        }
+    
+        .hourly-forecast {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align the items to the top */
+            flex-wrap: wrap;
+            margin: -10px; /* Adjust the spacing between weather cards */
+        }
+    
+        .hourly-forecast .weather-card {
+            background-color: #000;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            text-align: center;
+            flex-basis: calc(100% / 12 - 40px);
+        }
+    
+        .hourly-card p {
+            margin: 0;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+    
+        .hourly-card .temperature {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-family: "Arial Rounded MT Bold", sans-serif;
+        }
+    
+        .weather-icon {
+            width: 50px;
+            height: 50px;
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 10px;
+        }
+    </style>
+    
+    
+    <script>
+        // Function to format the time as HH:MM:SS
+        function formatTime(date) {
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            let seconds = date.getSeconds();
+            return `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
+        }
+
+        // Function to pad a number with leading zeros
+        function padZero(number) {
+            return number.toString().padStart(2, '0');
+        }
+
+        // Function to update the current time in the current weather card
+        function updateCurrentTime() {
+            const currentTimeElement = document.getElementById('current-time');
+            const currentDate = new Date();
+            const currentTime = formatTime(currentDate);
+            currentTimeElement.textContent = `Current Time: ${currentTime}`;
+        }
+
+        // Update the current time initially and every second
+        window.addEventListener('DOMContentLoaded', updateCurrentTime);
+        setInterval(updateCurrentTime, 1000);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">Weather Forecast</div>
+        
+        <div class="current-weather">
+            <p id="current-time"></p> <!-- Current time element -->
+            <p class="temperature">{{ weather['temperature'] }}°F</p>
+            <p>Feels Like: {{ weather['feels_like'] }}°F</p>
+            <p>Humidity: {{ weather['humidity'] }}%</p>
+            <p>Weather Description: {{ weather['weather_desc'] }}</p>
+            <img class="weather-icon" src="http://openweathermap.org/img/wn/{{ weather['hourly_data'][0]['icon'] }}.png" alt="Weather Icon">
+        </div>
+        
+        <div class="hourly-forecast">
+            {% for hour in weather['hourly_data'][:8] %}
+            <div class="weather-card">
+                <p>{{ hour.dt }}</p>
+                <p class="temperature">{{ hour.temp }}°F</p>
+                <p>{{ hour.weather_desc }}</p>
+                {% if hour.precipitation_prob > 0 %}
+                <p>Rain: {{ hour.precipitation_prob }}%</p>
+                {% endif %}
+                <img class="weather-icon" src="http://openweathermap.org/img/wn/{{ hour.icon }}.png" alt="Weather Icon">
+            </div>
+            {% endfor %}
+        </div>
+        
+    </div>
+</body>
+</html>
